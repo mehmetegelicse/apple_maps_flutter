@@ -1,21 +1,3 @@
-# Changelog
-
-## 1.2.0
-
-* Added a `markerAnnotationWithHue()` and `pinAnnotationWithHue()` method to allow custom marker/pin colors
-## 1.1.0
-
-* Added Annotation zIndex
-* Added posibility to take snapshots of the map
-## 1.0.3
-
-* Fixes an issue where mapController.moveCamera would animate the camera transition
-* To animate a camera movement, mapController.animateCamera should be used instead
-
-## 1.0.2
-
-* Removed Android folder to fix build failures
-
 ## 1.0.1
 
 * Fixes memory leak

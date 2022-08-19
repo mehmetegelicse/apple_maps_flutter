@@ -20,7 +20,6 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
     var oldBounds: CGRect?
     var options: Dictionary<String, Any>?
     var isMyLocationButtonShowing: Bool? = false
-    
     fileprivate let locationManager: CLLocationManager = CLLocationManager()
     
     let mapTypes: Array<MKMapType> = [
@@ -265,12 +264,6 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
     
     @objc func centerMapOnUserButtonClicked() {
        self.setUserTrackingMode(MKUserTrackingMode.follow, animated: true)
-    }
-    
-    func getMapViewAnnotations() -> [FlutterAnnotation?] {
-        let flutterAnnotations = self.annotations as? [FlutterAnnotation] ?? []
-        let sortedAnnotations = flutterAnnotations.sorted(by: { $0.zIndex  < $1.zIndex })
-        return sortedAnnotations
     }
        
     

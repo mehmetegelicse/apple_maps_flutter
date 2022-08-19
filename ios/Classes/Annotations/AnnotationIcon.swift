@@ -16,20 +16,13 @@ class AnnotationIcon: Equatable {
     var iconType: IconType
     var id: String
     var image: UIImage?
-    var hueColor: Double?
     
     public init(id: String, iconType: IconType) {
         self.iconType = iconType
         self.id = id
     }
     
-    public init(id: String, iconType: IconType, hueColor: Double) {
-        self.iconType = iconType
-        self.id = id
-        self.hueColor = hueColor
-    }
-    
-    public init(withAsset name: String, id: String, iconScale: CGFloat? = 1.0) {
+    public init(named name: String, id: String, iconScale: CGFloat? = 1.0) {
         self.iconType = .CUSTOM_FROM_ASSET
         self.id = id
         if let uiImage: UIImage =  UIImage.init(named: name) {
@@ -56,7 +49,7 @@ class AnnotationIcon: Equatable {
         guard abs(scale - 1) >= 0 else {
             return image
         }
-        return UIImage.init(cgImage: cgImage, scale: 4.0, orientation: image.imageOrientation)
+        return UIImage.init(cgImage: cgImage, scale: 2.0, orientation: image.imageOrientation)
     }
     
     static func == (lhs: AnnotationIcon, rhs: AnnotationIcon) -> Bool {

@@ -21,9 +21,13 @@ extension AppleMapController: PolylineDelegate {
             if flutterPolyline.isVisible! {
                 polylineRenderer.strokeColor = flutterPolyline.color
                 polylineRenderer.lineWidth = flutterPolyline.width ?? 1.0
-                polylineRenderer.lineDashPattern = flutterPolyline.pattern
-                polylineRenderer.lineJoin = flutterPolyline.lineJoin!
-                polylineRenderer.lineCap = flutterPolyline.capType!
+                polylineRenderer.lineDashPattern = linePatternToArray(patternData: flutterPolyline.pattern, lineWidth: flutterPolyline.width)
+                polylineRenderer.lineJoin = availableJointTypes[flutterPolyline.lineJoin ?? 2]
+                if flutterPolyline.pattern != nil && flutterPolyline.pattern?.count != 0 {
+                    polylineRenderer.lineCap = getLineCapForLinePattern(linePatternData: flutterPolyline.pattern)
+                } else {
+                    polylineRenderer.lineCap = availableCaps[flutterPolyline.capType ?? "buttCap"]!
+                }
             } else {
                 polylineRenderer.strokeColor = UIColor.clear
                 polylineRenderer.lineWidth = 0.0

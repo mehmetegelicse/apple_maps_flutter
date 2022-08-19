@@ -143,9 +143,10 @@ class Annotation {
   /// * has no info window text; [infoWindowText] is `InfoWindowText.noText`
   /// * is positioned at 0, 0; [position] is `LatLng(0.0, 0.0)`
   /// * is visible; [visible] is true
-  Annotation({
+  const Annotation({
     required this.annotationId,
     this.alpha = 1.0,
+    this.rotation = 0,
     this.anchor = const Offset(0.5, 1.0),
     this.draggable = false,
     this.icon = BitmapDescriptor.defaultAnnotation,
@@ -153,7 +154,6 @@ class Annotation {
     this.position = const LatLng(0.0, 0.0),
     this.onTap,
     this.visible = true,
-    this.zIndex = -1,
     this.onDragEnd,
   }) : assert(0.0 <= alpha && alpha <= 1.0);
 
@@ -164,6 +164,8 @@ class Annotation {
   ///
   /// 0.0 means fully transparent, 1.0 means fully opaque.
   final double alpha;
+
+  final int rotation;
 
   /// The icon image point that will be placed at the [position] of the marker.
   ///
@@ -194,17 +196,11 @@ class Annotation {
 
   final ValueChanged<LatLng>? onDragEnd;
 
-  /// The z-index of the annotation, used to determine relative drawing order of
-  /// map overlays.
-  ///
-  /// Overlays are drawn in order of z-index, so that lower values means drawn
-  /// earlier, and thus appearing to be closer to the surface of the Earth.
-  double zIndex;
-
   /// Creates a new [Annotation] object whose values are the same as this instance,
   /// unless overwritten by the specified parameters.
   Annotation copyWith({
     double? alphaParam,
+    int? rotationParam,
     Offset? anchorParam,
     bool? consumeTapEventsParam,
     bool? draggableParam,
@@ -212,7 +208,6 @@ class Annotation {
     InfoWindow? infoWindowParam,
     LatLng? positionParam,
     bool? visibleParam,
-    double? zIndexParam,
     VoidCallback? onTapParam,
     ValueChanged<LatLng>? onDragEndParam,
   }) {
@@ -220,13 +215,13 @@ class Annotation {
       annotationId: annotationId,
       anchor: anchorParam ?? anchor,
       alpha: alphaParam ?? alpha,
+      rotation: rotationParam ?? rotation,
       draggable: draggableParam ?? draggable,
       icon: iconParam ?? icon,
       infoWindow: infoWindowParam ?? infoWindow,
       position: positionParam ?? position,
       onTap: onTapParam ?? onTap,
       visible: visibleParam ?? visible,
-      zIndex: zIndexParam ?? zIndex,
       onDragEnd: onDragEndParam ?? onDragEnd,
     );
   }
@@ -242,13 +237,13 @@ class Annotation {
 
     addIfPresent('annotationId', annotationId.value);
     addIfPresent('alpha', alpha);
+    addIfPresent('rotation', rotation);
     addIfPresent('anchor', _offsetToJson(anchor));
     addIfPresent('draggable', draggable);
     addIfPresent('icon', icon._toJson());
     addIfPresent('infoWindow', infoWindow._toJson());
     addIfPresent('visible', visible);
     addIfPresent('position', position._toJson());
-    addIfPresent('zIndex', zIndex);
     return json;
   }
 
@@ -257,15 +252,7 @@ class Annotation {
     if (identical(this, other)) return true;
     if (other is! Annotation) return false;
     final Annotation typedOther = other;
-    return annotationId == typedOther.annotationId &&
-        alpha == typedOther.alpha &&
-        anchor == typedOther.anchor &&
-        draggable == typedOther.draggable &&
-        icon == typedOther.icon &&
-        infoWindow == typedOther.infoWindow &&
-        position == typedOther.position &&
-        visible == typedOther.visible &&
-        zIndex == typedOther.zIndex;
+    return annotationId == typedOther.annotationId;
   }
 
   @override
@@ -273,9 +260,8 @@ class Annotation {
 
   @override
   String toString() {
-    return 'Annotation{annotationId: $annotationId, alpha: $alpha, draggable: $draggable, '
-        'icon: $icon, infoWindow: $infoWindow, position: $position ,visible: $visible, '
-        'onTap: $onTap}, zIndex: $zIndex, onTap: $onTap}';
+    return 'Annotation{annotationId: $annotationId, alpha: $alpha, rotation: $rotation, draggable: $draggable,'
+        'icon: $icon, infoWindow: $infoWindow, position: $position ,visible: $visible, onTap: $onTap}';
   }
 }
 

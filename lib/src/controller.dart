@@ -66,10 +66,6 @@ class AppleMapController {
       case 'infoWindow#onTap':
         _appleMapState.onInfoWindowTap(call.arguments['annotationId']);
         break;
-      case 'annotation#onZIndexChanged':
-        _appleMapState.onAnnotationZIndexChanged(
-            call.arguments['annotationId'], call.arguments['zIndex']);
-        break;
       case 'map#onTap':
         _appleMapState.onTap(LatLng._fromJson(call.arguments['position'])!);
         break;
@@ -198,7 +194,7 @@ class AppleMapController {
         <String, String>{'annotationId': annotationId.value});
   }
 
-  /// Changes the map camera position without animating the transition.
+  /// Changes the map camera position.
   ///
   /// The returned [Future] completes after the change has been made on the
   /// platform side.
@@ -239,9 +235,7 @@ class AppleMapController {
   }
 
   /// Returns the image bytes of the map
-  Future<Uint8List?> takeSnapshot(
-      [SnapshotOptions snapshotOptions = const SnapshotOptions()]) {
-    return channel.invokeMethod<Uint8List>(
-        'map#takeSnapshot', snapshotOptions._toMap());
+  Future<Uint8List?> takeSnapshot() {
+    return channel.invokeMethod<Uint8List>('map#takeSnapshot');
   }
 }
