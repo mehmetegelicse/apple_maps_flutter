@@ -352,6 +352,11 @@ extension AppleMapController: MKMapViewDelegate {
 }
 
 extension AppleMapController {
+    private func takeSnapshot(onCompletion: @escaping (FlutterStandardTypedData?, Error?) -> Void) {
+        // MKMapSnapShotOptions setting.
+        snapShotOptions.region = self.mapView.region
+        snapShotOptions.size = self.mapView.frame.size
+        snapShotOptions.scale = UIScreen.main.scale
         snapShotOptions.showsBuildings = true
         snapShotOptions.showsPointsOfInterest = options.showPointsOfInterest
         snapShotOptions.mapType = MKMapType.satellite
@@ -387,4 +392,5 @@ extension AppleMapController {
                 }
             }
         }
+    }
 }
