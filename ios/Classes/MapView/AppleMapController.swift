@@ -352,23 +352,39 @@ extension AppleMapController: MKMapViewDelegate {
 }
 
 extension AppleMapController {
-    private func takeSnapshot(onCompletion: @escaping (FlutterStandardTypedData?, Error?) -> Void) {
-        // MKMapSnapShotOptions setting.
-        snapShotOptions.region = self.mapView.region
-        snapShotOptions.size = self.mapView.frame.size
-        snapShotOptions.scale = UIScreen.main.scale
+        snapShotOptions.showsBuildings = true
+        snapShotOptions.showsPointsOfInterest = options.showPointsOfInterest
+        snapShotOptions.mapType = MKMapType.satellite
         
         // Set MKMapSnapShotOptions to MKMapSnapShotter.
         snapShot = MKMapSnapshotter(options: snapShotOptions)
         
         snapShot?.cancel()
         
-        snapShot?.start(completionHandler: {(snapshot: MKMapSnapshotter.Snapshot?, error: Error?) -> Void in
-            if let imageData = snapshot?.image.pngData() {
-                onCompletion(FlutterStandardTypedData.init(bytes: imageData), nil)
-            } else {
-                onCompletion(nil, error)
+        if #available(iOS 10.0, *) {
+            snapShot?.start { [unowned self] snapshot, error in
+                guard let snapshot = snapshot, error == nil else {
+                    onCompletion(nil, error)
+                    return
+                }
+
+                let image = UIGraphicsImageRenderer(size: self.snapShotOptions.size).image { context in
+                    snapshot.image.draw(at: .zero)
+                    let rect = snapShotOptions.mapRect
+                    for annotation in self.mapView.getMapViewAnnotations() {
+                        self.drawAnnotations(annotation: annotation, point: snapshot.point(for: annotation!.coordinate))
+                    }
+
+                    for overlay in self.mapView.overlays {
+                        if ((overlay.intersects?(rect)) != nil) {
+                            self.drawOverlays(overlay: overlay, snapshot: snapshot, context: context)
+                        }
+                    }
+                }
+
+                if let imageData = image.pngData() {
+                    onCompletion(FlutterStandardTypedData.init(bytes: imageData), nil)
+                }
             }
-        })
-    }
+        }
 }
