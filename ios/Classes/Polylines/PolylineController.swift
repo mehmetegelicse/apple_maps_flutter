@@ -27,7 +27,7 @@ extension AppleMapController: PolylineDelegate {
                     polylineRenderer.lineCap = getLineCapForLinePattern(linePatternData: flutterPolyline.pattern)
                 } else {
                     polylineRenderer.lineCap = availableCaps[flutterPolyline.capType ?? "buttCap"]!
-                }
+                } 
             } else {
                 polylineRenderer.strokeColor = UIColor.clear
                 polylineRenderer.lineWidth = 0.0
