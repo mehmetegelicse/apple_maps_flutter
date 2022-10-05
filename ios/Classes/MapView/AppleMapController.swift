@@ -349,18 +349,17 @@ extension AppleMapController {
                 let image = UIGraphicsImageRenderer(size: self.snapShotOptions.size).image { context in
                     snapshot.image.draw(at: .zero)
                     let rect = snapShotOptions.mapRect
-                    if options.showAnnotations {
                         for annotation in self.mapView.getMapViewAnnotations() {
                             self.drawAnnotations(annotation: annotation, point: snapshot.point(for: annotation!.coordinate))
                         }
-                    }
-                    if options.showOverlays {
+                    
+             
                         for overlay in self.mapView.overlays {
                             if ((overlay.intersects?(rect)) != nil) {
                                 self.drawOverlays(overlay: overlay, snapshot: snapshot, context: context)
                             }
                         }
-                    }
+                    
                 }
 
                 if let imageData = image.pngData() {
