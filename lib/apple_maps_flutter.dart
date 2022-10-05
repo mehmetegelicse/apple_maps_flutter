@@ -6,12 +6,10 @@ library apple_maps_flutter;
 
 import 'dart:async';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 part 'src/annotation.dart';
@@ -32,3 +30,4 @@ part 'src/polyline_updates.dart';
 part 'src/polygon.dart';
 part 'src/polygon_updates.dart';
 part 'src/ui.dart';
+part 'src/snapshot.dart';

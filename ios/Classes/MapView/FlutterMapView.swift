@@ -194,6 +194,11 @@ class FlutterMapView: MKMapView, UIGestureRecognizerDelegate {
             }
         }
     }
+
+    func getMapViewAnnotations() -> [FlutterAnnotation?] {
+        let flutterAnnotations = self.annotations as? [FlutterAnnotation] ?? []
+        return flutterAnnotations   
+    }
     
     func setUserLocation() {
         let authorizationStatus = CLLocationManager.authorizationStatus()

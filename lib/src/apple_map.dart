@@ -41,6 +41,7 @@ class AppleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
+    this.snapshotOptions,
   }) : super(key: key);
 
   final MapCreatedCallback? onMapCreated;
@@ -161,6 +162,8 @@ class AppleMap extends StatefulWidget {
   /// The amount of additional space (measured in screen points) used for padding for the
   /// native controls.
   final EdgeInsets padding;
+
+  final SnapshotOptions? snapshotOptions;
 
   @override
   State createState() => _AppleMapState();
