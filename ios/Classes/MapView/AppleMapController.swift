@@ -216,7 +216,7 @@ public class AppleMapController: NSObject, FlutterPlatformView {
     }
     
     private func moveCamera(args: Dictionary<String, Any>) -> Void {
-        let positionData: Dictionary<String, Any> = self.toPositionData(data: args["cameraUpdate"] as! Array<Any>, animated: true)
+        let positionData: Dictionary<String, Any> = self.toPositionData(data: args["cameraUpdate"] as! Array<Any>, animated: false)
         if !positionData.isEmpty {
             guard let _ = positionData["moveToBounds"] else {
                 self.mapView.setCenterCoordinate(positionData, animated: false)
