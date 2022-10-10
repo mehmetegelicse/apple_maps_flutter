@@ -216,7 +216,7 @@ public class AppleMapController: NSObject, FlutterPlatformView {
     }
     
     private func moveCamera(args: Dictionary<String, Any>) -> Void {
-        let positionData :Dictionary<String, Any> = self.toPositionData(data: args["cameraUpdate"] as! Array<Any>, animated: false)
+        let positionData: Dictionary<String, Any> = self.toPositionData(data: args["cameraUpdate"] as! Array<Any>, animated: false)
         if !positionData.isEmpty {
             guard let _ = positionData["moveToBounds"] else {
                 self.mapView.setCenterCoordinate(positionData, animated: false)
@@ -227,7 +227,7 @@ public class AppleMapController: NSObject, FlutterPlatformView {
     }
     
     private func animateCamera(args: Dictionary<String, Any>) -> Void {
-        let positionData :Dictionary<String, Any> = self.toPositionData(data: args["cameraUpdate"] as! Array<Any>, animated: true)
+        let positionData: Dictionary<String, Any> = self.toPositionData(data: args["cameraUpdate"] as! Array<Any>, animated: true)
         if !positionData.isEmpty {
             guard let _ = positionData["moveToBounds"] else {
                 self.mapView.setCenterCoordinate(positionData, animated: true)
@@ -349,16 +349,14 @@ extension AppleMapController {
                 let image = UIGraphicsImageRenderer(size: self.snapShotOptions.size).image { context in
                     snapshot.image.draw(at: .zero)
                     let rect = snapShotOptions.mapRect
-                        for annotation in self.mapView.getMapViewAnnotations() {
-                            self.drawAnnotations(annotation: annotation, point: snapshot.point(for: annotation!.coordinate))
+                    for overlay in self.mapView.overlays {
+                        if ((overlay.intersects?(rect)) != nil) {
+                            self.drawOverlays(overlay: overlay, snapshot: snapshot, context: context)
                         }
-                    
-             
-                        for overlay in self.mapView.overlays {
-                            if ((overlay.intersects?(rect)) != nil) {
-                                self.drawOverlays(overlay: overlay, snapshot: snapshot, context: context)
-                            }
-                        }
+                    }
+                    for annotation in self.mapView.getMapViewAnnotations() {
+                        self.drawAnnotations(annotation: annotation, point: snapshot.point(for: annotation!.coordinate))
+                    }
                     
                 }
 
@@ -368,6 +366,7 @@ extension AppleMapController {
             }
         }
     }
+    
     private func drawAnnotations(annotation: FlutterAnnotation?, point: CGPoint) {
         guard annotation != nil else {
             return
