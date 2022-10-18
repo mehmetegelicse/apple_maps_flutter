@@ -6,6 +6,7 @@ public class AppleMapController: NSObject, FlutterPlatformView {
     var registrar: FlutterPluginRegistrar
     var channel: FlutterMethodChannel
     var initialCameraPosition: [String: Any]
+    var onCalloutTapGestureRecognizer: UITapGestureRecognizer?
     var options: [String: Any]
     var currentlySelectedAnnotation: String?
     var snapShotOptions: MKMapSnapshotter.Options = MKMapSnapshotter.Options()
@@ -53,6 +54,8 @@ public class AppleMapController: NSObject, FlutterPlatformView {
         if let circlesToAdd: NSArray = args["circlesToAdd"] as? NSArray {
             self.addCircles(circleData: circlesToAdd)
         }
+        self.onCalloutTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.calloutTapped(_:)))
+
     }
     
     deinit {
@@ -61,7 +64,7 @@ public class AppleMapController: NSObject, FlutterPlatformView {
         self.removeAllPolygons()
         self.removeAllPolylines()
     }
-    
+
     public func view() -> UIView {
         return mapView
     }
@@ -309,6 +312,16 @@ extension AppleMapController: MKMapViewDelegate {
             return self.getAnnotationView(annotation: flutterAnnotation)
         }
         return nil
+    }
+
+    public func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView)  {
+        if let annotation :FlutterAnnotation = view.annotation as? FlutterAnnotation  {
+            if annotation.infoWindowConsumesTapEvents {
+                view.addGestureRecognizer(self.onCalloutTapGestureRecognizer!)
+            }
+            self.currentlySelectedAnnotation = annotation.id
+            self.onAnnotationClick(annotation: annotation)
+        }
     }
     
     public func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
