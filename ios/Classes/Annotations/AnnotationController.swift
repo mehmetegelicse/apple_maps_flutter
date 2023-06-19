@@ -24,7 +24,9 @@ extension AppleMapController: AnnotationDelegate {
             }
         }
         guard annotationView != nil else {
+            print("annotation view is nil")
             return MKAnnotationView()
+        
         }
         annotationView!.annotation = annotation
         // If annotation is not visible set alpha to 0 and don't let the user interact with it
@@ -120,7 +122,7 @@ extension AppleMapController: AnnotationDelegate {
     }
 
 
-    private func removeAnnotation(id: String) {
+    public func removeAnnotation(id: String) {
         if let flutterAnnotation :FlutterAnnotation = self.getAnnotation(with: id) {
             self.mapView.removeAnnotation(flutterAnnotation)
         }
@@ -152,11 +154,11 @@ extension AppleMapController: AnnotationDelegate {
         }
     }
 
-    private func getAnnotation(with id: String) -> FlutterAnnotation? {
+    func getAnnotation(with id: String) -> FlutterAnnotation? {
         return self.mapView.annotations.filter { annotation in return (annotation as? FlutterAnnotation)?.id == id }.first as? FlutterAnnotation
     }
 
-    private func addAnnotation(annotationData: Dictionary<String, Any>) {
+    public func addAnnotation(annotationData: Dictionary<String, Any>) {
         let annotation :MKAnnotation = FlutterAnnotation(fromDictionary: annotationData, registrar: registrar)
         self.mapView.addAnnotation(annotation)
     }

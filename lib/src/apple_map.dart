@@ -284,6 +284,11 @@ class _AppleMapState extends State<AppleMap> {
     _annotations[annotationId]?.onDragEnd?.call(position);
   }
 
+  void onAnnotationRotate(String annotationIdParam, double rotationAngle) {
+    final AnnotationId annotationId = AnnotationId(annotationIdParam);
+    _annotations[annotationId]?.onRotate?.call(rotationAngle);
+  }
+
   void onPolylineTap(String polylineIdParam) {
     final PolylineId polylineId = PolylineId(polylineIdParam);
     _polylines[polylineId]?.onTap?.call();

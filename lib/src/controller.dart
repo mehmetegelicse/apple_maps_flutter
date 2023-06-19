@@ -6,21 +6,17 @@ part of apple_maps_flutter;
 
 /// Controller for a single AppleMap instance running on the host platform.
 class AppleMapController {
-  AppleMapController._(
-    this.channel,
-    CameraPosition initialCameraPosition,
-    this._appleMapState,
-  ) {
+  AppleMapController._(this.channel,
+      CameraPosition initialCameraPosition,
+      this._appleMapState,) {
     channel.setMethodCallHandler(_handleMethodCall);
   }
 
-  static Future<AppleMapController> init(
-    int id,
-    CameraPosition initialCameraPosition,
-    _AppleMapState appleMapState,
-  ) async {
+  static Future<AppleMapController> init(int id,
+      CameraPosition initialCameraPosition,
+      _AppleMapState appleMapState,) async {
     final MethodChannel channel =
-        MethodChannel('apple_maps_plugin.luisthein.de/apple_maps_$id');
+    MethodChannel('apple_maps_plugin.luisthein.de/apple_maps_$id');
     // await channel.invokeMethod<void>('map#waitForMap');
     return AppleMapController._(
       channel,
@@ -62,6 +58,10 @@ class AppleMapController {
       case 'annotation#onDragEnd':
         _appleMapState.onAnnotationDragEnd(call.arguments['annotationId'],
             LatLng._fromJson(call.arguments['position'])!);
+        break;
+      case 'annotation#rotate':
+        _appleMapState.onAnnotationRotate(
+            call.arguments['annotationId'], call.arguments['rotationAngle']!);
         break;
       case 'infoWindow#onTap':
         _appleMapState.onInfoWindowTap(call.arguments['annotationId']);
@@ -204,6 +204,16 @@ class AppleMapController {
     });
   }
 
+  Future<void> rotateAnnotation(
+      {required String annotationId, required double degree, double? durationInSeconds }) async {
+    await channel.invokeMethod<void>('annotation#rotate', <String, dynamic>{
+      'annotation': {
+        'id': annotationId,
+        'rotation': degree,
+        'duration': durationInSeconds ?? 0
+      }});
+  }
+
   /// Returns the current zoomLevel.
   Future<double?> getZoomLevel() async {
     return channel.invokeMethod<double>('camera#getZoomLevel');
@@ -212,7 +222,7 @@ class AppleMapController {
   /// Return [LatLngBounds] defining the region that is visible in a map.
   Future<LatLngBounds> getVisibleRegion() async {
     final Map<String, dynamic>? latLngBounds =
-        await channel.invokeMapMethod<String, dynamic>('map#getVisibleRegion');
+    await channel.invokeMapMethod<String, dynamic>('map#getVisibleRegion');
     final LatLng southwest = LatLng._fromJson(latLngBounds?['southwest'])!;
     final LatLng northeast = LatLng._fromJson(latLngBounds?['northeast'])!;
 

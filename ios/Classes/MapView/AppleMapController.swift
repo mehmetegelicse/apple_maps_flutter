@@ -41,7 +41,7 @@ public class AppleMapController: NSObject, FlutterPlatformView {
         self.mapView.delegate = self
         self.mapView.setCenterCoordinate(initialCameraPosition, animated: false)
         self.setMethodCallHandlers()
-        
+
         if let annotationsToAdd: NSArray = args["annotationsToAdd"] as? NSArray {
             self.annotationsToAdd(annotations: annotationsToAdd)
         }
@@ -110,6 +110,10 @@ public class AppleMapController: NSObject, FlutterPlatformView {
                     break
                 case "camera#move":
                     self.moveCamera(args: args)
+                    result(nil)
+                    break
+                case "annotation#rotate":
+                    self.rotateAnnotation(args:args)
                     result(nil)
                     break
                 case "camera#convert":
@@ -228,7 +232,36 @@ public class AppleMapController: NSObject, FlutterPlatformView {
             self.mapView.setBounds(positionData, animated: false)
         }
     }
-    
+
+     private func rotateAnnotation(args: Dictionary<String, Any>) -> Void {
+        
+        guard let annotationData = args["annotation"] as? Dictionary<String, Any> else {
+        print("rotation: annotation is null")
+           return;
+        }
+         guard let id = annotationData["id"] as? String else {
+             print("rotation: annotation is null")
+             return;
+         }
+         guard let rotation = annotationData["rotation"] as? CGFloat else {
+             print("rotation: rotation is null")
+             return;
+         }
+         var duration:Double? = 0.5;
+         if(annotationData["duration"] != nil){
+             duration = annotationData["duration"] as? Double
+         }
+         guard let annotation = self.mapView.annotations.filter({ annotation in return (annotation as? FlutterAnnotation)?.id == annotationData["id"] as? String}).first as? FlutterAnnotation else {
+             print("rotation: There is no annotation with this id")
+             return
+         }
+         UIView.animate(withDuration: duration ?? 0.5) {
+             self.mapView.view(for: annotation)?.transform = CGAffineTransform(rotationAngle: self.degreesToRadians(degrees: rotation))
+         }
+        
+    }
+    func degreesToRadians(degrees: Double) -> CGFloat { return CGFloat(degrees * .pi / 180.0) }
+
     private func animateCamera(args: Dictionary<String, Any>) -> Void {
         let positionData: Dictionary<String, Any> = self.toPositionData(data: args["cameraUpdate"] as! Array<Any>, animated: true)
         if !positionData.isEmpty {
@@ -401,7 +434,7 @@ extension AppleMapController {
             annotationImage?.draw(at: offsetPoint)
         }
     }
-    
+
     @available(iOS 10.0, *)
     private func drawOverlays(overlay: MKOverlay?, snapshot: MKMapSnapshotter.Snapshot, context: UIGraphicsRendererContext) {
         guard overlay != nil else {

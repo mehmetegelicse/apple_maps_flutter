@@ -93,7 +93,8 @@ class InfoWindow {
 
   @override
   String toString() {
-    return 'InfoWindow{title: $title, snippet: $snippet, anchor: $anchor, consumesTapEvents: ${onTap != null}}';
+    return 'InfoWindow{title: $title, snippet: $snippet, anchor: $anchor, consumesTapEvents: ${onTap !=
+        null}}';
   }
 }
 
@@ -102,7 +103,7 @@ class InfoWindow {
 /// This does not have to be globally unique, only unique among the list.
 @immutable
 class AnnotationId {
-  AnnotationId(this.value);
+  const AnnotationId(this.value);
 
   /// value of the [AnnotationId].
   final String value;
@@ -155,6 +156,7 @@ class Annotation {
     this.onTap,
     this.visible = true,
     this.onDragEnd,
+    this.onRotate,
   }) : assert(0.0 <= alpha && alpha <= 1.0);
 
   /// Uniquely identifies a [Annotation].
@@ -166,6 +168,8 @@ class Annotation {
   final double alpha;
 
   final int rotation;
+
+  final Function(double)? onRotate;
 
   /// The icon image point that will be placed at the [position] of the marker.
   ///
@@ -209,6 +213,7 @@ class Annotation {
     LatLng? positionParam,
     bool? visibleParam,
     VoidCallback? onTapParam,
+    Function(double)? onRotateParam,
     ValueChanged<LatLng>? onDragEndParam,
   }) {
     return Annotation(
@@ -223,6 +228,7 @@ class Annotation {
       onTap: onTapParam ?? onTap,
       visible: visibleParam ?? visible,
       onDragEnd: onDragEndParam ?? onDragEnd,
+      onRotate: onRotateParam ?? onRotateParam,
     );
   }
 
@@ -271,8 +277,9 @@ Map<AnnotationId, Annotation> _keyByAnnotationId(
     return <AnnotationId, Annotation>{};
   }
   return Map<AnnotationId, Annotation>.fromEntries(annotations.map(
-      (Annotation annotation) => MapEntry<AnnotationId, Annotation>(
-          annotation.annotationId, annotation)));
+          (Annotation annotation) =>
+          MapEntry<AnnotationId, Annotation>(
+              annotation.annotationId, annotation)));
 }
 
 List<Map<String, dynamic>>? _serializeAnnotationSet(
